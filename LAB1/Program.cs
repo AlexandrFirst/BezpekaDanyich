@@ -7,7 +7,14 @@ namespace LAB1
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            DES des = new DES();
+            //key max 8 chars
+            string key = "ketToEnc";
+            var encryptedText = des.Encrypt("Some text to encrypt", key);
+            Console.WriteLine(encryptedText);
+            Console.WriteLine("=========================================================");
+            var decryptedText = des.Decrypt(encryptedText, key);
+            Console.WriteLine(decryptedText);
         }
     }
 }
