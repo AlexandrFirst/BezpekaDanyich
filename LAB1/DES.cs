@@ -6,7 +6,6 @@ namespace LAB1
 {
     public class DES
     {
-
         //initial permutation
         private int[] ip = new int[] { 58,50,42,34,26,18,10,2,60,52,44,36,28,20,12,4,
                                        62,54,46,38,30,22,14,6,64,56,48,40,32,24,16,8,
@@ -75,45 +74,7 @@ namespace LAB1
         private int[] pbox = new int[] { 16,7,20,21,29,12,28,17,1,15,23,26,5,18,31,10,
                                          2,8,24,14,32,27,3,9,19,13,30,6,22,11,4,25 };
 
-        int[] plaintextbin = new int[5000];
-        char[] ptca;
-        int[] ciphertextbin = new int[5000];
-        char[] ctca;
-        int[] keybin = new int[64];
-        char[] kca;
-        int[] ptextbitslice = new int[64];
-        int[] ctextbitslice = new int[64];
-        int[] ippt = new int[64];
-        int[] ipct = new int[64];
-        int[] ptLPT = new int[32];
-        int[] ptRPT = new int[32];
-        int[] ctLPT = new int[32];
-        int[] ctRPT = new int[32];
-        int[] changedkey = new int[56];
-        int[] shiftedkey = new int[56];
-        int[] tempRPT = new int[32];
-        int[] tempLPT = new int[32];
-        int[] CKey = new int[28];
-        int[] DKey = new int[28];
-        int[] compressedkey = new int[48];
-        int[] ctExpandedLPT = new int[48];
-        int[] ptExpandedRPT = new int[48];
-        int[] XoredRPT = new int[48];
-        int[] XoredLPT = new int[48];
-        int[] row = new int[2];
-        int rowindex;
-        int[] column = new int[4];
-        int columnindex;
-        int sboxvalue;
-        int[] tempsboxarray = new int[4];
-        int[] ptSBoxRPT = new int[32];
-        int[] ctSBoxLPT = new int[32];
-        int[] ctPBoxLPT = new int[32];
-        int[] ptPBoxRPT = new int[32];
-        int[] attachedpt = new int[64];
-        int[] attachedct = new int[64];
-        int[] fppt = new int[64];
-        int[] fpct = new int[64];
+        private int festelRounds = 16;
 
         private int GetASCII(char ch)
         {
@@ -154,417 +115,66 @@ namespace LAB1
             return len;
         }
 
-        private void Discard8thBitsFromKey()
+        private int[] Discard8thBitsFromKey(int[] origKeyBin)
         {
+            int[] diskarded8BitKey = new int[56];
             for (int i = 0, j = 0; i < 64; i++)
             {
                 if ((i + 1) % 8 == 0)
                     continue;
-                changedkey[j++] = keybin[i];
+                diskarded8BitKey[j++] = origKeyBin[i];
             }
+            return diskarded8BitKey;
         }
 
-        private void AssignChangedKeyToShiftedKey()
-        {
-            for (int i = 0; i < 56; i++)
-            {
-                shiftedkey[i] = changedkey[i];
-            }
-        }
-
-        private void InitialPermutation(int[] sentarray, int[] savedarray)
-        {
-            int tmp;
-            for (int i = 0; i < 64; i++)
-            {
-                tmp = ip[i];
-                savedarray[i] = sentarray[tmp - 1];
-            }
-        }
-
-        private void DivideIntoLPTAndRPT(int[] sentarray, int[] savedLPT, int[] savedRPT)
-        {
-            for (int i = 0, k = 0; i < 32; i++, ++k)
-            {
-                savedLPT[k] = sentarray[i];
-            }
-
-            for (int i = 32, k = 0; i < 64; i++, ++k)
-            {
-                savedRPT[k] = sentarray[i];
-            }
-        }
-
-        private void SaveTemporaryHPT(int[] fromHPT, int[] toHPT)
-        {
-            for (int i = 0; i < 32; i++)
-            {
-                toHPT[i] = fromHPT[i];
-            }
-        }
-
-        private void DivideIntoCKeyAndDKey()
-        {
-            for (int i = 0, j = 0; i < 28; i++, ++j)
-            {
-                CKey[j] = shiftedkey[i];
-            }
-
-            for (int i = 28, j = 0; i < 56; i++, ++j)
-            {
-                DKey[j] = shiftedkey[i];
-            }
-        }
-
-        private void CircularLeftShift(int[] HKey)
-        {
-            int i, FirstBit = HKey[0];
-            for (i = 0; i < 27; i++)
-            {
-                HKey[i] = HKey[i + 1];
-            }
-            HKey[i] = FirstBit;
-        }
-
-        private void AttachCKeyAndDKey()
-        {
-            int j = 0;
-            for (int i = 0; i < 28; i++)
-            {
-                shiftedkey[j++] = CKey[i];
-            }
-
-            for (int i = 0; i < 28; i++)
-            {
-                shiftedkey[j++] = DKey[i];
-            }
-        }
-
-        private void CompressionPermutation()
-        {
-            int temp;
-            for (int i = 0; i < 48; i++)
-            {
-                temp = cpt[i];
-                compressedkey[i] = shiftedkey[temp - 1];
-            }
-        }
-
-        private void ExpansionPermutation(int[] HPT, int[] ExpandedHPT)
-        {
-            int temp;
-            for (int i = 0; i < 48; i++)
-            {
-                temp = ept[i];
-                ExpandedHPT[i] = HPT[temp - 1];
-            }
-        }
-
-        private void XOROperation(int[] array1, int[] array2, int[] array3, int SizeOfTheArray)
-        {
-            for (int i = 0; i < SizeOfTheArray; i++)
-            {
-                array3[i] = array1[i] ^ array2[i];
-            }
-        }
-
-        private void AssignSBoxHPT(int[] temparray, int[] SBoxHPTArray, int fromIndex)
-        {
-            int j = fromIndex;
-            for (int i = 0; i < 4; i++)
-            {
-                SBoxHPTArray[j++] = tempsboxarray[i];
-            }
-        }
-
-
-        private void SBoxSubstituion(int[] XoredHPT, int[] SBoxHPT)
-        {
-            int r, t, j = 0, q = 0;
-            for (int i = 0; i < 48; i += 6)
-            {
-                row[0] = XoredHPT[i];
-                row[1] = XoredHPT[i + 5];
-                rowindex = BitArray.ToDecimal(row);
-
-                column[0] = XoredHPT[i + 1];
-                column[1] = XoredHPT[i + 2];
-                column[2] = XoredHPT[i + 3];
-                column[3] = XoredHPT[i + 4];
-                columnindex = BitArray.ToDecimal(column);
-
-                t = ((16 * (rowindex)) + (columnindex));
-
-                sboxvalue = sbox[j++, t];
-
-                tempsboxarray = BitArray.ToBits(sboxvalue, 4);
-
-                r = q * 4;
-
-                AssignSBoxHPT(tempsboxarray, SBoxHPT, r);
-
-                ++q;
-            }
-        }
-
-        private void PBoxPermutation(int[] SBoxHPT, int[] PBoxHPT)
-        {
-            int temp;
-            for (int i = 0; i < 32; i++)
-            {
-                temp = pbox[i];
-                PBoxHPT[i] = SBoxHPT[temp - 1];
-            }
-        }
-
-        private void Swap(int[] tempHPT, int[] HPT)
-        {
-            for (int i = 0; i < 32; i++)
-            {
-                HPT[i] = tempHPT[i];
-            }
-        }
-
-        //Heart of DES  
-        private void SixteenRounds()
-        {
-            int n;
-
-            for (int i = 0; i < 16; i++)
-            {
-                SaveTemporaryHPT(ptRPT, tempRPT);
-
-                n = clst[i];
-
-                DivideIntoCKeyAndDKey();
-
-                for (int j = 0; j < n; j++)
-                {
-                    CircularLeftShift(CKey);
-                    CircularLeftShift(DKey);
-                }
-
-                AttachCKeyAndDKey();
-
-                CompressionPermutation();
-
-                ExpansionPermutation(ptRPT, ptExpandedRPT);
-
-                XOROperation(compressedkey, ptExpandedRPT, XoredRPT, 48);
-
-                SBoxSubstituion(XoredRPT, ptSBoxRPT);
-
-                PBoxPermutation(ptSBoxRPT, ptPBoxRPT);
-
-                XOROperation(ptPBoxRPT, ptLPT, ptRPT, 32);
-
-                Swap(tempRPT, ptLPT);
-            }
-        }
-
-        private void AttachLPTAndRPT(int[] savedLPT, int[] savedRPT, int[] AttachedPT)
-        {
-            int j = 0;
-            for (int i = 0; i < 32; i++)
-            {
-                AttachedPT[j++] = savedLPT[i];
-            }
-
-            for (int i = 0; i < 32; i++)
-            {
-                AttachedPT[j++] = savedRPT[i];
-            }
-        }
-
-        private void FinalPermutation(int[] fromPT, int[] toPT)
-        {
-            int temp;
-            for (int i = 0; i < 64; i++)
-            {
-                temp = fp[i];
-                toPT[i] = fromPT[temp - 1];
-            }
-        }
-
-        //DES Components  
         private void StartEncryption()
         {
-            InitialPermutation(ptextbitslice, ippt);
 
-            DivideIntoLPTAndRPT(ippt, ptLPT, ptRPT);
-
-            AssignChangedKeyToShiftedKey();
-
-            SixteenRounds();
-
-            AttachLPTAndRPT(ptLPT, ptRPT, attachedpt);
-
-            FinalPermutation(attachedpt, fppt);
         }
 
-        private string ConvertBitsToText(int[] sentarray, int len)
-        {
-            string finaltext = "";
-            int j, k, decimalvalue;
-            int[] tempbitarray = new int[8];
 
-            for (int i = 0; i < len; i += 8)
+        public string Encrypt(string plainText, string key)
+        {
+            char[] plainTextCharArr = plainText.ToCharArray();
+            char[] keyCharArr = key.ToCharArray();
+
+            var plainTextBinSize = plainTextCharArr.Length * 8;
+            if (plainTextBinSize % 64 != 0)
             {
-                for (k = 0, j = i; j < (i + 8); ++k, ++j)
-                {
-                    tempbitarray[k] = sentarray[j];
-                }
-
-                decimalvalue = BitArray.ToDecimal(tempbitarray);
-
-                if (decimalvalue == 0)
-                    break;
-
-                finaltext += (char)decimalvalue;
+                plainTextBinSize += (64 - (plainTextBinSize % 64));
             }
+            var keyBinSize = 64;
 
-            return finaltext;
-        }
+            int[] plainTextBin = new int[plainTextBinSize];
+            int[] keyBin = new int[keyBinSize];
 
-        public string Encrypt(string plaintext, string key)
-        {
-            string ciphertext = null;
+            int plainTextBitCount = ConvertTextToBits(plainTextCharArr, plainTextBin);
+            int plainTextBitCountBase64 = AppendZeroes(plainTextBin, plainTextBitCount);
 
-            ptca = plaintext.ToCharArray();
-            kca = key.ToCharArray();
-            int j, k;
+            int keyBitCount = ConvertTextToBits(keyCharArr, keyBin);
+            if (keyBitCount > 64) throw new Exception("Key is greated than 64 bits");
 
-            //Converting plain text characters into binary digits  
-            int st = ConvertTextToBits(ptca, plaintextbin);
+            int keyBitCountBit64 = AppendZeroes(keyBin, keyBitCount);
+            var changedKey = Discard8thBitsFromKey(keyBin);
 
-            int fst = AppendZeroes(plaintextbin, st);
 
-            //Converting key characters into binary digits  
-            int sk = ConvertTextToBits(kca, keybin);
 
-            int fsk = AppendZeroes(keybin, sk);
-
-            Discard8thBitsFromKey();
-
-            for (int i = 0; i < fst; i += 64)
+            for (int i = 0; i < festelRounds; i += 64)
             {
-                for (k = 0, j = i; j < (i + 64); ++j, ++k)
+                int[] blockToEncode = new int[64];
+                for (int k = 0, j = i; j < (i + 64); ++j, ++k)
                 {
-                    ptextbitslice[k] = plaintextbin[j];
+                    blockToEncode[k] = plainTextBin[j];
                 }
+                
 
-                StartEncryption();
-
-                for (k = 0, j = i; j < (i + 64); ++j, ++k)
-                {
-                    ciphertextbin[j] = fppt[k];
-                }
             }
-
-            ciphertext = ConvertBitsToText(ciphertextbin, fst);
-
-            return ciphertext;
+            return "";
         }
 
-        private void CircularRightShift(int[] HKey)
+        public string Decrypt(string encodedText, string key)
         {
-            int i, LastBit = HKey[27];
-            for (i = 27; i >= 1; --i)
-            {
-                HKey[i] = HKey[i - 1];
-            }
-            HKey[i] = LastBit;
-        }
-
-        private void ReversedSixteenRounds()
-        {
-            int n;
-
-            for (int i = 0; i < 16; i++)
-            {
-                SaveTemporaryHPT(ctLPT, tempLPT);
-
-                CompressionPermutation();
-
-                ExpansionPermutation(ctLPT, ctExpandedLPT);
-
-                XOROperation(compressedkey, ctExpandedLPT, XoredLPT, 48);
-
-                SBoxSubstituion(XoredLPT, ctSBoxLPT);
-
-                PBoxPermutation(ctSBoxLPT, ctPBoxLPT);
-
-                XOROperation(ctPBoxLPT, ctRPT, ctLPT, 32);
-
-                Swap(tempLPT, ctRPT);
-
-                n = crst[i];
-
-                DivideIntoCKeyAndDKey();
-
-                for (int j = 0; j < n; j++)
-                {
-                    CircularRightShift(CKey);
-                    CircularRightShift(DKey);
-                }
-
-                AttachCKeyAndDKey();
-            }
-        }
-
-        private void StartDecryption()
-        {
-            InitialPermutation(ctextbitslice, ipct);
-
-            DivideIntoLPTAndRPT(ipct, ctLPT, ctRPT);
-
-            AssignChangedKeyToShiftedKey();
-
-            ReversedSixteenRounds();
-
-            AttachLPTAndRPT(ctLPT, ctRPT, attachedct);
-
-            FinalPermutation(attachedct, fpct);
-        }
-
-        public string Decrypt(string ciphertext, string key)
-        {
-            string plaintext = null;
-
-            ctca = ciphertext.ToCharArray();
-            kca = key.ToCharArray();
-            int j, k;
-
-            //Converting plain text characters into binary digits  
-            int st = ConvertTextToBits(ctca, ciphertextbin);
-
-            int fst = AppendZeroes(ciphertextbin, st);
-
-            //Converting key characters into binary digits  
-            int sk = ConvertTextToBits(kca, keybin);
-
-            int fsk = AppendZeroes(keybin, sk);
-
-            Discard8thBitsFromKey();
-
-            for (int i = 0; i < fst; i += 64)
-            {
-                for (k = 0, j = i; j < (i + 64); ++j, ++k)
-                {
-                    ctextbitslice[k] = ciphertextbin[j];
-                }
-
-                StartDecryption();
-
-                for (k = 0, j = i; j < (i + 64); ++j, ++k)
-                {
-                    plaintextbin[j] = fpct[k];
-                }
-            }
-
-            plaintext = ConvertBitsToText(plaintextbin, fst);
-
-            return plaintext;
+            throw new NotImplementedException();
         }
     }
 }
