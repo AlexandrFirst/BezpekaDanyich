@@ -11,7 +11,7 @@ namespace LAB1
             //key max 8 chars
 
             string key = "superkey";
-            var encryptedText = des.Encrypt("GEY SEX gey sex to gey sex to gey sex to gey sex to gey sex to sdsddddddddddddddddddddddddddddddddddddddddddddddddddddddd", key);
+            var encryptedText = des.Encrypt("gey sex to gey sex to gey sex to gey sex to gey sex to gey sex to gey sex to gey sex to", key);
             
             Console.WriteLine(encryptedText);
             Console.WriteLine("=========================================================");
