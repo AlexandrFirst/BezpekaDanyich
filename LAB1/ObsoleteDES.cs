@@ -97,9 +97,9 @@ namespace LAB1
             }
         }
 
-        int[] plaintextbin = new int[5000];
+        int[] plaintextbin = new int[10000];
         char[] ptca;
-        int[] ciphertextbin = new int[5000];
+        int[] ciphertextbin = new int[10000];
         char[] ctca;
         int[] keybin = new int[64];
         char[] kca;

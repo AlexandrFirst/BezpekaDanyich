@@ -10,8 +10,8 @@ namespace LAB1
             ObsoleteDES des = new ObsoleteDES();
             //key max 8 chars
 
-            string key = "aaa";
-            var encryptedText = des.Encrypt("Hello world12ahfbdsvfbvsdhfgdgdggdgd some interesting tet gay se", key);
+            string key = "superkey";
+            var encryptedText = des.Encrypt("GEY SEX gey sex to gey sex to gey sex to gey sex to gey sex to sdsddddddddddddddddddddddddddddddddddddddddddddddddddddddd", key);
             
             Console.WriteLine(encryptedText);
             Console.WriteLine("=========================================================");
