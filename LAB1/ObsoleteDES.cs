@@ -352,8 +352,8 @@ namespace LAB1
         {
             int n;
 
-            //keyForRounds[blockNum] = new string[16];
-            //entropiaPerRound[blockNum] = new int[16];
+            keyForRounds[blockNum] = new string[16];
+            entropiaPerRound[blockNum] = new int[16];
 
             for (int i = 0; i < 16; i++)
             {
@@ -375,10 +375,10 @@ namespace LAB1
 
                 ExpansionPermutation(ptRPT, ptExpandedRPT);
 
-                //string key = "";
-                //Array.ForEach(compressedkey, (el) => key += el.ToString());
+                string key = "";
+                Array.ForEach(compressedkey, (el) => key += el.ToString());
 
-                //keyForRounds[blockNum][i] = key;
+                keyForRounds[blockNum][i] = key;
 
 
 
@@ -392,8 +392,8 @@ namespace LAB1
 
                 Swap(tempRPT, ptLPT);
 
-                //int entropia = ptRPT.Count(x => x == 1) + ptLPT.Count(x => x == 1);
-                //entropiaPerRound[blockNum][i] = entropia;
+                int entropia = ptRPT.Count(x => x == 1) + ptLPT.Count(x => x == 1);
+                entropiaPerRound[blockNum][i] = entropia;
 
             }
         }
