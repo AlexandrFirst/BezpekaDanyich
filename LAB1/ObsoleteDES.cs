@@ -482,6 +482,8 @@ namespace LAB1
 
             Discard8thBitsFromKey();
 
+            Console.WriteLine(String.Join('|', keybin));
+
             entropiaPerRound = new int[fst / 64][];
             keyForRounds = new string[fst / 64][];
             for (int i = 0, c = 0; i < fst; i += 64, c++)
@@ -583,9 +585,9 @@ namespace LAB1
             int sk = ConvertTextToBits(kca, keybin);
 
             int fsk = AppendZeroes(keybin, sk);
-
+            
             Discard8thBitsFromKey();
-
+            Console.WriteLine(String.Join('|', keybin));
             for (int i = 0; i < fst; i += 64)
             {
                 for (k = 0, j = i; j < (i + 64); ++j, ++k)

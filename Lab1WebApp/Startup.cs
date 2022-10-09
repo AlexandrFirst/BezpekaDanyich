@@ -26,6 +26,21 @@ namespace Lab1WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                "CorsPolicy",
+                builder =>
+                {
+                    builder.
+                        AllowAnyOrigin().
+                        AllowAnyHeader().
+                        AllowAnyMethod();
+                });
+            });
+
             services.AddTransient<IDES, ObsoleteDES>();
         }
 
@@ -36,6 +51,8 @@ namespace Lab1WebApp
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors("CorsPolicy");
 
             app.UseRouting();
 
