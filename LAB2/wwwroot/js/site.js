@@ -35,17 +35,3 @@
         }
     });
 }
-
-function UpdateKeys() {
-    $.ajax({
-        type: "GET",
-        url: "/RSA/UpdateKey",
-        success: function (data) {
-            window.location.href = '/RSA/ShowInfo'
-            console.log('success')
-        },
-        error: function (errMsg) {
-            console.log('error')
-        }
-    });
-}

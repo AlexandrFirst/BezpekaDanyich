@@ -26,6 +26,7 @@ namespace LAB2.Controllers
             });
         }
 
+        [HttpGet]
         public IActionResult ShowInfo() 
         {
             var publicKeys = manager.GetPublicKey();
@@ -43,7 +44,7 @@ namespace LAB2.Controllers
         public IActionResult UpdateKey() 
         {
             manager.UpdateKeys();
-            return Ok();
+            return RedirectToAction("ShowInfo", "RSA");
         }
 
         [HttpPost]

@@ -13,6 +13,8 @@
     @Model.PrivateKey
 </div>
 
-<button class="btn btn-success mt-4" onclick="UpdateKeys()">Request to refresh keys</button>
+<form method="get" action="UpdateKey">
+    <button class="btn btn-success mt-4" type="submit">Request to refresh keys</button>
+</form>
 <br/>
 @Html.ActionLink("Back to login", "Login", "RSA")
