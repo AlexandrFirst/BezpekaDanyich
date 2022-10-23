@@ -1,0 +1,51 @@
+﻿function SendEncryptedUserInfo(key, data)
+{
+    const encrypt = new JSEncrypt();
+    encrypt.setPublicKey(atob(key));
+
+    const encryptedMail = encrypt.encrypt(data.mail);
+    const encryptedPassword = encrypt.encrypt(data.pass);
+
+    console.log("Encoded mail: " + encryptedMail);
+    console.log("Encoded password: " + encryptedPassword);
+
+    const dataToSend = {
+        mail: encryptedMail,
+        password: encryptedPassword
+    }
+
+    const modal = $("#modal");
+
+    $.ajax({
+        type: "POST",
+        url: "/RSA/Login",
+        data: JSON.stringify(dataToSend),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (data)
+        {
+            $("#resultInfo").text(data.message);
+            modal.modal();
+        },
+        error: function (errMsg)
+        {
+            console.log(errMsg)
+            $("#resultInfo").text(JSON.parse(errMsg.responseText).message);
+            modal.modal();
+        }
+    });
+}
+
+function UpdateKeys() {
+    $.ajax({
+        type: "GET",
+        url: "/RSA/UpdateKey",
+        success: function (data) {
+            window.location.href = '/RSA/ShowInfo'
+            console.log('success')
+        },
+        error: function (errMsg) {
+            console.log('error')
+        }
+    });
+}

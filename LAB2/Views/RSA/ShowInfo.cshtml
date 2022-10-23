@@ -1,0 +1,18 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model ShowInfoModel
+
+
+<div>
+    <h2>Public key</h2>
+    @Model.PublicKey
+</div>
+<div>
+    <h2>Private key</h2>
+    @Model.PrivateKey
+</div>
+
+<button class="btn btn-success mt-4" onclick="UpdateKeys()">Request to refresh keys</button>
+<br/>
+@Html.ActionLink("Back to login", "Login", "RSA")
