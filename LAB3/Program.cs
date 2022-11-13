@@ -22,14 +22,14 @@ namespace LAB3
 
             Console.WriteLine("Original files:");
             var bit_array1 = hashRun(new string[] { file1, file2, file3 }).ToArray();
-            
+
             Console.WriteLine("Modified files:");
             var bit_array2 = hashRun(new string[] { m_file1, m_file2, m_file3 }).ToArray();
-            
+
             Console.WriteLine(new string('-', 80));
             Console.WriteLine();
             Console.WriteLine(new string('-', 80));
-            
+
             if (bit_array1.Count() != bit_array2.Count())
             {
                 Console.WriteLine("Unable to comapre bit array");
@@ -77,6 +77,13 @@ namespace LAB3
                 }
                 Console.WriteLine(new string('=', 80));
             }
+
+            Console.WriteLine(new string('*', 80));
+
+            HashGenerator hashGenerator = new HashGenerator();
+            hashGenerator.Init();
+            hashGenerator.GenerateCollision();
+
         }
 
         private static IEnumerable<(BitArray[] bitArray, HashType hashType)> hashRun(string[] filesToHash)

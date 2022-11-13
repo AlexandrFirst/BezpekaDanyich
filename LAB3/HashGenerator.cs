@@ -18,6 +18,10 @@ namespace LAB3
         {
             this.pathes = pathes;
         }
+        public HashGenerator()
+        {
+   
+        }
 
         public void Init(bool generateNew = false)
         {
@@ -61,7 +65,66 @@ namespace LAB3
                 T2 = new byte[] { 2, 1, 3, 0 };
             }
         }
+        //https://gist.github.com/CodesInChaos/4a399a26b98221155a92
+        public void GenerateCollision() 
+        {
+            var m0 = new byte[] { 0 };
+            var targetHash = pearsonHash(new byte[] { 1 });
+            int maxAlphabet = 280; // limit the alphabet size to this
+            byte[][] alphabetLetters1 = Enumerable.Range('A', 26).Select(i => new byte[] { (byte)i }).ToArray();
+            byte[][] alphabetLetters2 = Combinations(alphabetLetters1, alphabetLetters1).ToArray(); // two letters
 
+            var alphabet = alphabetLetters2.Take(maxAlphabet).ToArray();
+
+            var h0 = pearsonHash(m0);
+            Console.WriteLine("Target Hash: " + BitConverter.ToString( targetHash));
+
+            Func<byte[], int, byte[], bool> check = (m, count, target) => pearsonHash(m0.Concat(m).ToArray()).Take(count).SequenceEqual(target.Take(count));
+
+            var projections = alphabet;
+            var fixedPoints = alphabet;
+
+
+            for (int i = 1; i <= h0.Length; i++)
+            {
+                var fixedPoints2 = Combinations(fixedPoints, fixedPoints).Where(m => check(m, i, h0)).Take(maxAlphabet).ToArray();
+                var projections2 = Combinations(fixedPoints, projections).Where(m => check(m, i, targetHash)).Take(maxAlphabet).ToArray();
+
+                fixedPoints = fixedPoints2;
+                projections = projections2;
+
+                Console.WriteLine(i);
+                Console.WriteLine(fixedPoints.Length + " " + projections.Length);
+                Console.WriteLine(alphabet.First().Length);
+                Console.WriteLine(BitConverter.ToString(pearsonHash(m0.Concat(projections.First()).ToArray())));
+                Console.WriteLine();
+
+            }
+
+            var fullSuffix = projections.First();
+            var combinedMessage = m0.Concat(fullSuffix).ToArray();
+            Console.WriteLine(BitConverter.ToString(combinedMessage));
+            
+            var attackHash = pearsonHash(combinedMessage);
+            var initHash = pearsonHash(new byte[] { 1 });
+
+            Console.WriteLine("{0} | {1}", BitConverter.ToString(attackHash), BitConverter.ToString(initHash));
+
+            Console.WriteLine("Suffix (hex): " + BitConverter.ToString(fullSuffix));
+            Console.WriteLine("Suffix (text): " + Encoding.ASCII.GetString(fullSuffix));
+            Console.WriteLine("Success: " + targetHash.SequenceEqual(attackHash));
+        }
+
+        private IEnumerable<byte[]> Combinations(ICollection<byte[]> xs, ICollection<byte[]> ys)
+        {
+            foreach (var x in xs)
+            {
+                foreach (var y in ys)
+                {
+                    yield return x.Concat(y).ToArray();
+                }
+            }
+        }
         public (byte hash_b, string hash_s)[] DoHash8bit()
         {
             var result = pathes.Select(x => GenerateHash8bit(x)).ToArray();
@@ -120,7 +183,6 @@ namespace LAB3
             return (hash_b: hash, hash_s: result);
         }
 
-
         private (byte hash_b, string hash_s) GenerateHash2bit(string path)
         {
             if (string.IsNullOrEmpty(path))
@@ -145,6 +207,17 @@ namespace LAB3
             string result = BitConverter.ToString(new byte[] { hash });
 
             return (hash_b: hash, hash_s: result);
+        }
+
+        private byte[] pearsonHash(byte[] input)
+        {
+            byte hash = 0;
+            foreach (var b in input)
+            {
+                hash = T8[(byte)(hash ^ b)];
+            }
+
+            return new byte[] { hash };
         }
     }
 }
