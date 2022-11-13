@@ -35,3 +35,12 @@
         }
     });
 }
+
+function SendMessageToDecrypts(data) {
+    const encrypt = new JSEncrypt();
+    const dataToEncrypt = JSON.stringify(data);
+    var Bits = 2048;
+
+    var MattsRSAkey = cryptico.generateRSAKey(dataToEncrypt, Bits);
+    debugger;
+}

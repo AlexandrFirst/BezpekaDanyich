@@ -139,6 +139,9 @@
         const dataToEncrypt = { mail: username, pass: password }
         console.log(key);
         SendEncryptedUserInfo(key, dataToEncrypt)
+
+        const dataToDecrypt = { mail: username, pass: password }
+        SendMessageToDecrypts(dataToDecrypt)
     }
 
 </script>
