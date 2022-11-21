@@ -1,4 +1,6 @@
 using LAB4.Data;
+using LAB4.Hub;
+using LAB4.Services;
 using LAB4.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,12 +32,13 @@ namespace LAB4
             services.AddControllers();
 
             services.AddDbContext<ChatContext>(opt => opt.UseInMemoryDatabase("ChatDb"));
+            services.AddSignalR();
 
             services.AddSingleton<PrimeNumberGenerator>();
             services.AddSingleton<RandomNumberGenerator>();            
             
             services.AddTransient<PrimitiveRootGenerator>();
-            services.AddTransient<>
+            services.AddTransient<ICypher, Cypher>();
 
         }
 
@@ -54,6 +57,7 @@ namespace LAB4
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<UsersHub>("/chat");
             });
         }
     }

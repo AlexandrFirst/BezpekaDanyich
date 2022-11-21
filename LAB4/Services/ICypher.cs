@@ -2,7 +2,7 @@
 {
     public interface ICypher
     {
-        string DecryptMessage(byte[] publicKey, string message);
-        string EncryptMessage(byte[] publicKey, string message);
+        byte[] DecryptMessage(byte[] publicKey, byte[] message);
+        byte[] EncryptMessage(byte[] publicKey, byte[] message);
     }
 }

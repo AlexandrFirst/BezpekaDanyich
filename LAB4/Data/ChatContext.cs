@@ -8,6 +8,7 @@ namespace LAB4.Data
     {
         public virtual DbSet<ChatInfo> ChatInfos { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<RUserChats> RUserChats { get; set; }
 
         public ChatContext([NotNull] DbContextOptions options) : base(options)
         {
@@ -30,7 +31,7 @@ namespace LAB4.Data
                 entity.Property(i => i.Id).ValueGeneratedOnAdd();
 
                 entity.HasMany(x => x.RUserChats)
-                        .WithOne(x => x.User).OnDelete(DeleteBehavior.SetNull);
+                        .WithOne(x => x.User).OnDelete(DeleteBehavior.Cascade);
             });
 
 
@@ -42,9 +43,15 @@ namespace LAB4.Data
                 entity.Property(i => i.Id).ValueGeneratedOnAdd();
 
                 entity.HasMany(x => x.RUserChats)
-                        .WithOne(x => x.ChatInfo).OnDelete(DeleteBehavior.SetNull);
+                        .WithOne(x => x.ChatInfo).OnDelete(DeleteBehavior.Cascade);
             });
 
+
+            modelBuilder.Entity<RUserChats>(entity => 
+            {
+                entity.HasKey(i => i.UserChatId);
+                entity.Property(i => i.UserChatId).ValueGeneratedOnAdd();
+            });
         }
     }
 }
