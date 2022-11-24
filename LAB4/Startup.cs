@@ -40,6 +40,20 @@ namespace LAB4
             services.AddTransient<PrimitiveRootGenerator>();
             services.AddTransient<ICypher, Cypher>();
 
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                "CorsPolicy",
+                builder =>
+                {
+                    builder.
+                        AllowAnyOrigin().
+                        AllowAnyHeader().
+                        AllowAnyMethod();
+                });
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +63,8 @@ namespace LAB4
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors("CorsPolicy");
 
             app.UseRouting();
 

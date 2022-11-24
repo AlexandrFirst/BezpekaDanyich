@@ -1,1 +1,11 @@
-<div style="height: 300px; color: red; background: blue;">Hello world</div>
+<div id="login-form-wrap">
+    <h2>Login</h2>
+    <form id="login-form" style="padding-bottom: 20px;" [formGroup]="loginForm" (ngSubmit)="loginFormSubmit(loginForm.value)">
+        <p>
+            <input type="text" placeholder="Username" formControlName="userName">
+        </p>
+        <p>
+            <button class="sbmt-btn" type="submit" [disabled]="!loginForm.valid">Enter app</button>
+        </p>
+    </form>
+</div>

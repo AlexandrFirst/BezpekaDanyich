@@ -3,6 +3,8 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { HttpClientModule } from '@angular/common/http';
 
+import { ReactiveFormsModule } from '@angular/forms';
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthPageComponent } from './pages/auth-page/auth-page.component';
@@ -21,7 +23,8 @@ import { MainContentComponent } from './modules/main-content/main-content.compon
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    MainContentModule
+    MainContentModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

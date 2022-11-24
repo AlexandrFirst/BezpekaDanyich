@@ -7,6 +7,7 @@ import { ChatComponent } from 'src/app/pages/chat/chat.component';
 const routes: Routes = [
   {path: 'list', component: ChatListComponent},
   {path: 'chat/:id', component: ChatComponent},
+  {path: '', redirectTo: 'list', pathMatch:'full'},
 ]
 
 @NgModule({

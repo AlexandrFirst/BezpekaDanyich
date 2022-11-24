@@ -3,6 +3,7 @@ using LAB4.Data.Models;
 using LAB4.Dtos.User;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace LAB4.Controllers
@@ -37,10 +38,20 @@ namespace LAB4.Controllers
                 await context.Users.AddAsync(user);
                 await context.SaveChangesAsync();
 
+                
+
                 dbUser = user;
             }
-
-            return Ok(dbUser);
+            var loginResponse = new UserLoginResponse()
+            {
+                UserId = dbUser.Id,
+                UserChatInfos = dbUser.RUserChats.Select(x => new UserChatInfo()
+                {
+                    ChatId = x.ChatInfoId,
+                    ChatName = x.ChatInfo.Name
+                }).ToList()
+            };
+            return Ok(loginResponse);
         }
 
     }
