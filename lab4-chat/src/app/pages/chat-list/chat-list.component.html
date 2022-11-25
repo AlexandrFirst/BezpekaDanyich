@@ -1,1 +1,19 @@
-<p>chat-list works!</p>
+<div id="friendslist">
+    <div id="friends">
+        <div class="header">
+            Your chat list
+        </div>
+        <div *ngFor="let i of [].constructor(20)" class="friend">
+            <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" />
+            <p>
+                <strong>Miro Badev</strong>
+                <span>mirobadev@gmail.com</span>
+            </p>
+            <a href="javascripts:void(0)" style="position: absolute; top: 0; right: 0;"> Delete chat</a>
+        </div>
+        <div id="search">
+            <input type="text" id="searchfield" placeholder="Search contacts..." />
+            <a href="javascripts:void(0)" style="position: absolute; top: 0; right: 0;"> Create chat</a>
+        </div>
+    </div>
+</div>

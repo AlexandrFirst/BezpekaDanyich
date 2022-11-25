@@ -1,0 +1,109 @@
+#friendslist {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.friend {
+    height: 70px;
+    width: 100%;
+    border-bottom: 1px solid #e7ebee;
+    position: relative;
+}
+
+.friend:hover {
+    background: #f1f4f6;
+    cursor: pointer;
+}
+
+.friend img {
+    width: 40px;
+    border-radius: 50%;
+    margin: 15px;
+    float: left;
+}
+
+.floatingImg {
+    width: 40px;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 12px;
+    border: 3px solid #fff;
+}
+
+.friend p {
+    padding: 15px 0 0 0;
+    float: left;
+    width: 220px;
+}
+
+.friend p strong {
+    font-weight: 600;
+    font-size: 15px;
+    color: #597a96;
+
+}
+
+.friend p span {
+    font-size: 13px;
+    font-weight: 400;
+    color: #aab8c2;
+}
+
+.friend .status {
+    background: #26c281;
+    border-radius: 50%;
+    width: 9px;
+    height: 9px;
+    position: absolute;
+    top: 31px;
+    right: 17px;
+}
+
+.friend .status.away {
+    background: #ffce54;
+}
+
+.friend .status.inactive {
+    background: #eaeef0;
+}
+
+.header {
+    height: 60px;
+    width: 100%;
+    position: sticky;
+    top: 0;
+    left: 0;
+    text-align: center;
+    line-height: 60px;
+    font-size: xx-large;
+    background: #e3e9ed;
+    z-index: 1;
+}
+
+#search {
+    height: 60px;
+    width: 100%;
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    
+}
+
+#searchfield {
+    background: #e3e9ed;
+    border: none;
+    padding: 0;
+    font-size: 14px;
+    font-family: "Open Sans", sans-serif;
+    font-weight: 400px;
+    color: #8198ac;
+    width: 100%;
+    height: 100%;
+}
+
+#searchfield:focus {
+    outline: 0;
+}
