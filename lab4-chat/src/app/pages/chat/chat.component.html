@@ -1,67 +1,17 @@
-<div id="chatview" class="p1">      
-    <div id="profile">
+<div id="chatview" class="p1">
+  <div id="chat-header">
+    <a href="javascript:void(0)" style="color: white;">Back to list</a>
+    <p style="margin-left: 10px;">Chat name</p>
+  </div>
+  <div id="chat-messages">
+    <div *ngFor="let i of [].constructor(20)" class="message" [ngClass]="{'owner' : 4 %2 === 0, 'other': 4%2!==0}">
+      <p>Text Text Text</p>
+      <p>(Sender Sender)</p>
+    </div>
 
-        <div id="close">
-            <div class="cy"></div>
-            <div class="cx"></div>
-        </div>
-        
-        <p>Miro Badev</p>
-        <span>miro@badev@gmail.com</span>
-    </div>
-    <div id="chat-messages">
-      <label>Thursday 02</label>
-        
-        <div class="message">
-          <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" />
-            <div class="bubble">
-              Really cool stuff!
-                <div class="corner"></div>
-                <span>3 min</span>
-            </div>
-        </div>
-        
-        <div class="message right">
-          <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/2_copy.jpg" />
-            <div class="bubble">
-              Can you share a link for the tutorial?
-                <div class="corner"></div>
-                <span>1 min</span>
-            </div>
-        </div>
-        
-        <div class="message">
-          <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" />
-            <div class="bubble">
-              Yeah, hold on
-                <div class="corner"></div>
-                <span>Now</span>
-            </div>
-        </div>
-        
-        <div class="message right">
-          <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/2_copy.jpg" />
-            <div class="bubble">
-              Can you share a link for the tutorial?
-                <div class="corner"></div>
-                <span>1 min</span>
-            </div>
-        </div>
-        
-        <div class="message">
-          <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg" />
-            <div class="bubble">
-              Yeah, hold on
-                <div class="corner"></div>
-                <span>Now</span>
-            </div>
-        </div>
-        
-    </div>
-  
     <div id="sendmessage">
-      <input type="text" value="Send message..." />
-        <button id="send"></button>
+      <input type="text" placeholder="Send message..." />
+      <button id="send">Send Message</button>
     </div>
 
-</div>    
+  </div>

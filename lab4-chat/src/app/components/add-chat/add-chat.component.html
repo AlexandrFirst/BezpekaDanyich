@@ -1,8 +1,10 @@
 <div style="width: 400px;">
-    <form>
+    <form [formGroup]="chatCreationForm" (ngSubmit)="addChat()">
         <div>
-            <input type="text" placeholder="enter chat name" />
+            <input type="hidden" formControlName="userId">
+            <input type="text" placeholder="enter chat name" formControlName="chatName" />
         </div>
-        <button type="submit">Create chat</button>
+        <button type="submit" [disabled]="!chatCreationForm.valid">Create chat</button>
+        <button type="button">Cancel</button>
     </form>
 </div>

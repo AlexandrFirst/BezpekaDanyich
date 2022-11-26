@@ -5,7 +5,7 @@
         </div>
         <div *ngIf="userChats.length == 0">No user chats exists</div>
 
-        <div *ngFor="let i of userChats" class="friend">
+        <div *ngFor="let i of userChats" class="friend" (click)="goToChat(i.chatId)">
             <p>
                 {{i.chatName}}
             </p>

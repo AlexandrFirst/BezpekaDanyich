@@ -24,7 +24,7 @@ namespace LAB4.Controllers
         private readonly PrimitiveRootGenerator primitiveRootGenerator;
         private readonly Utils.RandomNumberGenerator randomNumberGenerator;
         private readonly ICypher cypher;
- 
+
         public ChatController(ChatContext context,
             PrimeNumberGenerator primeNumberGenerator,
             PrimitiveRootGenerator primitiveRootGenerator,
@@ -72,6 +72,15 @@ namespace LAB4.Controllers
                 };
 
                 await context.ChatInfos.AddAsync(chatToCreate);
+
+                var user = await context.Users.FirstOrDefaultAsync(x => x.Id == chatCreateRequest.CreatorId);
+                if (user == null)
+                {
+                    return NotFound(new { Message = "No created for new chat found" });
+                }
+
+                user.RUserChats.Add(new RUserChats() { ChatInfo = chatToCreate });
+
                 await context.SaveChangesAsync();
 
                 return Ok(new CreateChatResponse() { Id = chatToCreate.Id, Name = chatToCreate.Name });
@@ -126,17 +135,19 @@ namespace LAB4.Controllers
 
             var rUserChatInfo = await context.RUserChats.FirstOrDefaultAsync(x => x.ChatInfoId == chatEncodingRequest.ChatId &&
                 x.UserId == chatEncodingRequest.UserId);
-            if (rUserChatInfo is null) {
-                return BadRequest(new {Message = "Unable to verify connection"});
+            if (rUserChatInfo is null)
+            {
+                return BadRequest(new { Message = "Unable to verify connection" });
             }
 
             BigInteger clientSharedKey = new BigInteger(chatEncodingRequest.ClientsKey);
 
-            var sharedKey = BigInteger.ModPow(clientSharedKey , rUserChatInfo.ConnectionSecretKey, chatDb.Prime);
+            var sharedKey = BigInteger.ModPow(clientSharedKey, rUserChatInfo.ConnectionSecretKey, chatDb.Prime);
 
             var encodingKey = cypher.EncryptMessage(sharedKey.ToByteArray(), chatDb.SecretKey);
 
-            return Ok(new ChatEncodingResponse() { 
+            return Ok(new ChatEncodingResponse()
+            {
                 EncodedEncodingKey = encodingKey
             });
         }

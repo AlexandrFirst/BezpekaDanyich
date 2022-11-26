@@ -79,6 +79,10 @@ export class AuthService {
     return this.userInfo.userChatInfos
   }
 
+  public get userId(): number {
+    return this.userInfo.userId;
+  }
+
   public set updateUserChats(newUserChats: UserChatInfo[]) {
     this.userInfo!.userChatInfos = [];
     this.userInfo!.userChatInfos.push(...newUserChats);

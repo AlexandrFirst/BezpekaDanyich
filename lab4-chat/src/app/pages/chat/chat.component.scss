@@ -1,0 +1,36 @@
+#chatview{
+    position: absolute;
+    width: 100%;
+    top: 0;
+    bottom: 0;
+    overflow-y: scroll;
+}
+
+#chat-header{
+    position: absolute;
+    top: 0;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    position: sticky;
+    background: rgb(58, 58, 58);
+    color: #ccc;
+}
+
+#sendmessage{
+    position: absolute;
+    bottom: 0;
+    position: sticky;
+}
+
+.message{
+    display: flex;
+}
+
+.owner{
+    justify-content: right;
+}
+
+.other{
+    justify-content: left;
+}
