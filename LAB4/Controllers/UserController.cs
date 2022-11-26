@@ -38,10 +38,30 @@ namespace LAB4.Controllers
                 await context.Users.AddAsync(user);
                 await context.SaveChangesAsync();
 
-                
-
                 dbUser = user;
             }
+
+            var loginResponse = MapDbUserToResponse(dbUser);
+            return Ok(loginResponse);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserById(int id) 
+        {
+            var dbUser = await context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            if (dbUser == null)
+            {
+                return NotFound(new { Message = "No authenticated user found" });
+            }
+            else 
+            {
+                var loginResponse = MapDbUserToResponse(dbUser);
+                return Ok(loginResponse);
+            }
+        }
+
+        private UserLoginResponse MapDbUserToResponse(User dbUser) 
+        {
             var loginResponse = new UserLoginResponse()
             {
                 UserId = dbUser.Id,
@@ -51,8 +71,7 @@ namespace LAB4.Controllers
                     ChatName = x.ChatInfo.Name
                 }).ToList()
             };
-            return Ok(loginResponse);
+            return loginResponse;
         }
-
     }
 }
