@@ -80,7 +80,10 @@ export class AuthService {
   }
 
   public get userId(): number {
-    return this.userInfo.userId;
+    if (this.userInfo)
+      return this.userInfo.userId;
+    else
+      return 0;
   }
 
   public set updateUserChats(newUserChats: UserChatInfo[]) {

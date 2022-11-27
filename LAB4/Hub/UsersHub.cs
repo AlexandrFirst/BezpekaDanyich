@@ -39,16 +39,16 @@ namespace LAB4.Hub
             await Clients.Group(chatId.ToString()).SendMessageToChat(Encoding.Unicode.GetString(encodedMessage));
         }
 
-        public async Task EnterGroup(int groupId, string userName) 
+        public async Task EnterGroup(int chatId, string userName) 
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, groupId.ToString());
-            await Clients.GroupExcept(groupId.ToString(),Context.ConnectionId).EnterGroup(userName);
+            await Groups.AddToGroupAsync(Context.ConnectionId, chatId.ToString());
+            await Clients.GroupExcept(chatId.ToString(),Context.ConnectionId).EnterGroup(userName);
         }
 
-        public async Task LeaveGroup(int groupId, string userName)
+        public async Task LeaveGroup(int chatId, string userName)
         {
-            await Clients.GroupExcept(groupId.ToString(), Context.ConnectionId).LeaveGroup(userName);
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupId.ToString());
+            await Clients.GroupExcept(chatId.ToString(), Context.ConnectionId).LeaveGroup(userName);
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatId.ToString());
         }
     }
 }
