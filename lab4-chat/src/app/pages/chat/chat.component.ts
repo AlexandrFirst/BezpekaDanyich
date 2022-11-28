@@ -17,7 +17,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   messages: MessageDecodedData[] = [];
 
   private chatId: number = 0;
-  private chatEncoding: Int8Array | null = null;
+  private chatEncoding: string | null = null;
 
   private infoMessageFlow: Subscription | null = null;
   private mainMessageFlow: Subscription | null = null;;
@@ -32,7 +32,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       console.log('wrong chat id')
       return;
     }
-
+    debugger;
     this.chatId = +_chatId;
 
     const getChatInfo = await this.chatService.EnterChat(this.chatId);
@@ -43,20 +43,30 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       .modPow(new BigInteger.BigInteger(secretKey.toString()),
         new BigInteger.BigInteger(getChatInfo.prime.toString()));
 
-    const chatEncodingResponse = await this.chatService.GetChatEncoding(this.chatId,
-      Int8Array.from(myPublicKey.toByteArray()));
 
-    const sharedKey = chatSharedKey.modPow(new BigInteger.BigInteger(secretKey.toString()),
-      new BigInteger.BigInteger(getChatInfo.prime.toString()));
+    const myPublicKeyArr = myPublicKey.toByteArray().reverse();
+    const chatEncodingResponse = await this.chatService.GetChatEncoding(this.chatId,
+      myPublicKeyArr);
+
+    const secretKeyBI = new BigInteger.BigInteger(secretKey.toString());
+    const primeBI = new BigInteger.BigInteger(getChatInfo.prime.toString());
+
+    const sharedKey = chatSharedKey.modPow(secretKeyBI, primeBI);
 
 
     this.chatEncoding = chatEncodingResponse.encodedEncodingKey;
+
     if (!this.chatEncoding) {
       console.error('Error while getting chat encoding');
     }
 
-    const key = CryptoJS.PBKDF2(sharedKey.toByteArray.toString(),
+    const password = this.byteArrayToWordArray(sharedKey.toByteArray().reverse());
+
+    const key = CryptoJS.PBKDF2(password,
       "some salt message", { iterations: 10_000 });
+
+    const realChatEncoding = CryptoJS.AES.decrypt(this.chatEncoding, key);
+
 
     this.signalRService.startConnection().then(async () => {
 
@@ -77,7 +87,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
         const byteData = this.strToUtf16Bytes(data.encodedData);
 
         const decryptedData = CryptoJS.AES.decrypt(byteData.toString(),
-          key).toString(CryptoJS.enc.Utf8);
+          realChatEncoding).toString(CryptoJS.enc.Utf16LE);
 
         const decodedMessage: MessageDecodedData = JSON.parse(decryptedData);
         this.messages.push(decodedMessage);
@@ -91,6 +101,18 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
   }
 
+
+  byteArrayToWordArray(ba: any): CryptoJS.lib.WordArray {
+    var wa: any = [],
+      i;
+    for (i = 0; i < ba.length; i++) {
+      wa[(i / 4) | 0] |= ba[i] << (24 - 8 * i);
+    }
+
+    return CryptoJS.lib.WordArray.create(wa, ba.length);
+  }
+
+
   strToUtf16Bytes(str: string) {
     const bytes = [];
     for (let ii = 0; ii < str.length; ii++) {
@@ -100,7 +122,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     return bytes;
   }
 
-  private fromByteArrayToBigIntegerJSBN(byteArr: Int8Array): BigInteger.BigInteger {
+  private fromByteArrayToBigIntegerJSBN(byteArr: number[]): BigInteger.BigInteger {
     const zero = new BigInteger.BigInteger('0');
     const one = new BigInteger.BigInteger('1');
     const n256 = new BigInteger.BigInteger('256');

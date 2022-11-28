@@ -1,11 +1,11 @@
 export interface ChatInfoResponse {
     id: number,
-    chatPublicKey: Int8Array,
+    chatPublicKey: number[],
     prime: number,
     name: string,
     primitiveRootModule: number;
 }
 
 export interface ChatEncodingResponse {
-    encodedEncodingKey: Int8Array
+    encodedEncodingKey: string
 }

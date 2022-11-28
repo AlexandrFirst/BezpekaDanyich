@@ -1,11 +1,10 @@
 export interface ChatInfoRequest {
-    uerId: number;
+    userId: number;
     chatId: number;
 }
 
 export interface ChatEncodingRequest{
-    
     chatId: number;
     userId: number;
-    clientsKey: Int8Array
+    clientsKey: number[]
 }

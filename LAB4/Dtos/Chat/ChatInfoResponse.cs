@@ -6,6 +6,6 @@
         public int Prime { get; set; }
         public int PrimitiveRootModule { get; set; }
         public string Name { get; set; }
-        public byte[] ChatPublicKey { get; set; }
+        public int[] ChatPublicKey { get; set; }
     }
 }

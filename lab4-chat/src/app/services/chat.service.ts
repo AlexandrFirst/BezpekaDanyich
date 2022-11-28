@@ -25,16 +25,31 @@ export class ChatService {
   public async EnterChat(chatId: number): Promise<ChatInfoResponse> {
     const requestParams = {
       chatId: chatId,
-      uerId: this.authService.userId
+      userId: this.authService.userId
     } as ChatInfoRequest;
 
     const chatResponseInfo = await firstValueFrom(this.httpClient.post(environment.baseApi + 'chat/info', requestParams)
-      .pipe(map(x => x as ChatInfoResponse)));
+      .pipe(map(x => {
+        console.log(x);
+        return x as ChatInfoResponse
+      })));
+
+   // chatResponseInfo.chatPublicKey = this.stringToByteArray(chatResponseInfo.chatPublicKey as unknown as string)
 
     return chatResponseInfo;
   }
 
-  public async GetChatEncoding(chatId: number, clientsKey: Int8Array) {
+
+  private stringToByteArray(s: string): number[] {
+
+    var result: number[] = [];
+    for (var i = 0; i < s.length; i++) {
+      result[i] = s.charCodeAt(i);
+    }
+    return result;
+  }
+
+  public async GetChatEncoding(chatId: number, clientsKey: number[]) {
     const requestParams = {
       chatId: chatId,
       userId: this.authService.userId,

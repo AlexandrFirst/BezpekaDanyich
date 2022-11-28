@@ -8,7 +8,9 @@ using LAB4.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using System;
+using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -102,7 +104,7 @@ namespace LAB4.Controllers
             var response = new ChatInfoResponse()
             {
                 Id = chatDb.Id,
-                ChatPublicKey = key.ToByteArray(),
+                ChatPublicKey = Array.ConvertAll(key.ToByteArray(), c => (int)c),
                 Prime = chatDb.Prime,
                 Name = chatDb.Name,
                 PrimitiveRootModule = chatDb.PrimitiveRootModule
@@ -116,6 +118,14 @@ namespace LAB4.Controllers
                 ConnectionSecretKey = connectionSecretKey
             };
 
+            var connections = await context.RUserChats.Where(x => x.ChatInfoId == chatInfoRequest.ChatId &&
+                x.UserId == chatInfoRequest.UserId).ToListAsync();
+
+            if (connections.Any())
+            {
+                context.RUserChats.RemoveRange(connections);
+            }
+
             await context.RUserChats.AddAsync(rUserChatInfo);
             await context.SaveChangesAsync();
 
@@ -128,7 +138,7 @@ namespace LAB4.Controllers
             int chatId = chatEncodingRequest.ChatId;
 
             var chatDb = await context.ChatInfos.FirstOrDefaultAsync(x => x.Id == chatId);
-            if (chatDb == null)
+            if (chatDb == null) 
             {
                 return NotFound(new { Message = "Chat with id: " + chatId + " is not found" });
             }
@@ -140,7 +150,9 @@ namespace LAB4.Controllers
                 return BadRequest(new { Message = "Unable to verify connection" });
             }
 
-            BigInteger clientSharedKey = new BigInteger(chatEncodingRequest.ClientsKey);
+            var userByteArray = Array.ConvertAll(chatEncodingRequest.ClientsKey, x => (byte)x);
+
+            BigInteger clientSharedKey = new BigInteger(userByteArray);
 
             var sharedKey = BigInteger.ModPow(clientSharedKey, rUserChatInfo.ConnectionSecretKey, chatDb.Prime);
 
