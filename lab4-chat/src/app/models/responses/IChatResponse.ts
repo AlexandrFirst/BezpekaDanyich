@@ -7,5 +7,6 @@ export interface ChatInfoResponse {
 }
 
 export interface ChatEncodingResponse {
-    encodedEncodingKey: string
+    encodedEncodingKey: string,
+    notEncodedEncodingKey: string
 }

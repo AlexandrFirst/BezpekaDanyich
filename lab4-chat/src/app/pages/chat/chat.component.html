@@ -4,14 +4,14 @@
     <p style="margin-left: 10px;">Chat name</p>
   </div>
   <div id="chat-messages">
-    <div *ngFor="let i of [].constructor(20)" class="message" [ngClass]="{'owner' : 4 %2 === 0, 'other': 4%2!==0}">
-      <p>Text Text Text</p>
-      <p>(Sender Sender)</p>
+    <div *ngFor="let message of messages" class="message">
+      <p>{{message.message}}</p>
+      <p>({{message.name}})</p>
     </div>
 
     <div id="sendmessage">
-      <input type="text" placeholder="Send message..." />
-      <button id="send">Send Message</button>
+      <input #textVal type="text" placeholder="Send message..." />
+      <button id="send" (click)="sendMessageBtnClick(textVal)">Send Message</button>
     </div>
 
   </div>

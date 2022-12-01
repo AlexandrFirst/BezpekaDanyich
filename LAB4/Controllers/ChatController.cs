@@ -89,6 +89,7 @@ namespace LAB4.Controllers
             }
         }
 
+
         [HttpPost("info")]
         public async Task<IActionResult> GetChatInfo([FromBody] ChatInfoRequest chatInfoRequest)
         {
@@ -160,7 +161,8 @@ namespace LAB4.Controllers
 
             return Ok(new ChatEncodingResponse()
             {
-                EncodedEncodingKey = encodingKey
+                EncodedEncodingKey = encodingKey,
+                NotEncodedEncodingKey = sharedKey.ToByteArray()
             });
         }
     }

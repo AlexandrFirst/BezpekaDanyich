@@ -42,12 +42,12 @@ namespace LAB4.Hub
         public async Task EnterGroup(int chatId, string userName) 
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, chatId.ToString());
-            await Clients.GroupExcept(chatId.ToString(),Context.ConnectionId).EnterGroup(userName);
+            await Clients.Group(chatId.ToString()).EnterGroup(userName);
         }
 
         public async Task LeaveGroup(int chatId, string userName)
         {
-            await Clients.GroupExcept(chatId.ToString(), Context.ConnectionId).LeaveGroup(userName);
+            await Clients.Group(chatId.ToString()).LeaveGroup(userName);
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatId.ToString());
         }
     }

@@ -16,6 +16,7 @@ namespace LAB4.Services
 
         public byte[] EncryptMessage(byte[] publicKey, byte[] message)
         {
+            
             byte[] encryptedMessage;
             byte[] salt = Encoding.Unicode.GetBytes(saltData);
 
@@ -24,6 +25,8 @@ namespace LAB4.Services
                 Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(publicKey, salt, 10_000);
                 encryptor.Key = pdb.GetBytes(32);
                 encryptor.IV = pdb.GetBytes(16);
+                encryptor.Padding = PaddingMode.PKCS7;
+                encryptor.Mode = CipherMode.CBC;
                 using (MemoryStream ms = new MemoryStream())
                 {
                     using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
@@ -50,6 +53,8 @@ namespace LAB4.Services
                 Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(publicKey, salt, 10_000);
                 encryptor.Key = pdb.GetBytes(32);
                 encryptor.IV = pdb.GetBytes(16);
+                encryptor.Padding = PaddingMode.PKCS7;
+                encryptor.Mode = CipherMode.CBC;
                 using (MemoryStream ms = new MemoryStream())
                 {
                     using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))

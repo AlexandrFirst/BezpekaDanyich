@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { Subject } from 'rxjs';
 import { MessageEncodedData } from '../models/responses/IMessageData';
 
@@ -18,8 +18,10 @@ export class SignalRService {
   public startConnection() {
     return new Promise((resolve, reject) => {
       this.hubConnection = new HubConnectionBuilder()
-        .withUrl("https://localhost:5000/chat").build();
-
+        .withUrl("http://localhost:5000/chat", {
+          skipNegotiation: true,
+          transport: HttpTransportType.WebSockets
+        }).build();
       this.hubConnection.start()
         .then(() => {
           console.log("connection established");
@@ -74,6 +76,20 @@ export class SignalRService {
         .invoke("LeaveGroup", chatId, userName)
         .then(() => {
           console.log(`User ${userName} entered chat with id: ${chatId}`)
+          return res(true);
+        }, (err) => {
+          console.error(err);
+          rej(false);
+        })
+    })
+  }
+
+  public sendMessage(chatId: number, encodedMessage: string){
+    return new Promise((res, rej) => {
+      (<HubConnection>this.hubConnection)
+        .invoke("SendMessageToGroup", chatId, encodedMessage)
+        .then(() => {
+          console.log(`Message to chat id: ${chatId} send`)
           return res(true);
         }, (err) => {
           console.error(err);
