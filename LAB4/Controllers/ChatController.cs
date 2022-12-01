@@ -13,6 +13,7 @@ using System;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace LAB4.Controllers
@@ -53,7 +54,7 @@ namespace LAB4.Controllers
             var dbChat = await context.ChatInfos.FirstOrDefaultAsync(x => x.Name.ToLower().Equals(chatNameToCreate.ToLower()));
             if (dbChat != null)
             {
-                return BadRequest(new { Message = "Chat with such name exists" });
+                return Ok(new CreateChatResponse() { Id = dbChat.Id, Name = dbChat.Name });
             }
             else
             {
@@ -74,14 +75,6 @@ namespace LAB4.Controllers
                 };
 
                 await context.ChatInfos.AddAsync(chatToCreate);
-
-                var user = await context.Users.FirstOrDefaultAsync(x => x.Id == chatCreateRequest.CreatorId);
-                if (user == null)
-                {
-                    return NotFound(new { Message = "No created for new chat found" });
-                }
-
-                user.RUserChats.Add(new RUserChats() { ChatInfo = chatToCreate });
 
                 await context.SaveChangesAsync();
 
@@ -105,7 +98,7 @@ namespace LAB4.Controllers
             var response = new ChatInfoResponse()
             {
                 Id = chatDb.Id,
-                ChatPublicKey = Array.ConvertAll(key.ToByteArray(), c => (int)c),
+                ChatPublicKey = Convert.ToBase64String(key.ToByteArray()),
                 Prime = chatDb.Prime,
                 Name = chatDb.Name,
                 PrimitiveRootModule = chatDb.PrimitiveRootModule
@@ -151,18 +144,24 @@ namespace LAB4.Controllers
                 return BadRequest(new { Message = "Unable to verify connection" });
             }
 
-            var userByteArray = Array.ConvertAll(chatEncodingRequest.ClientsKey, x => (byte)x);
+            var userByteArray = Convert.FromBase64String(chatEncodingRequest.ClientsKey);
 
             BigInteger clientSharedKey = new BigInteger(userByteArray);
 
             var sharedKey = BigInteger.ModPow(clientSharedKey, rUserChatInfo.ConnectionSecretKey, chatDb.Prime);
 
+            Console.WriteLine("Shared key:" + sharedKey);
+
             var encodingKey = cypher.EncryptMessage(sharedKey.ToByteArray(), chatDb.SecretKey);
+
+
+            Console.WriteLine("EncodedEncodingKey:" + Convert.ToBase64String(encodingKey));
+            Console.WriteLine("origEncoding: " + Convert.ToBase64String(chatDb.SecretKey));
 
             return Ok(new ChatEncodingResponse()
             {
-                EncodedEncodingKey = encodingKey,
-                NotEncodedEncodingKey = sharedKey.ToByteArray()
+                EncodedEncodingKey = Convert.ToBase64String(encodingKey),
+                NotEncodedEncodingKey = Convert.ToBase64String(chatDb.SecretKey)
             });
         }
     }

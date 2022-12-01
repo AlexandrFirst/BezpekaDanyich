@@ -2,7 +2,7 @@
 {
     public class ChatEncodingResponse
     {
-        public byte[] EncodedEncodingKey { get; set; }
-        public byte[] NotEncodedEncodingKey { get; set; }
+        public string EncodedEncodingKey { get; set; }
+        public string NotEncodedEncodingKey { get; set; }
     }
 }

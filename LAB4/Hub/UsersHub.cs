@@ -5,6 +5,7 @@ using LAB4.Services;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,7 +26,7 @@ namespace LAB4.Hub
         {
             var chat = await context.ChatInfos.FirstOrDefaultAsync(x => x.Id == chatId);
 
-            var b_decodedMessage = cyper.DecryptMessage(chat.SecretKey, Encoding.Unicode.GetBytes(encodedMessageInfo));
+            var b_decodedMessage = cyper.DecryptMessage(chat.SecretKey, Convert.FromBase64String(encodedMessageInfo));
             var decodedMessage = Encoding.Unicode.GetString(b_decodedMessage);
 
             InputMessage inputMessage = JsonConvert.DeserializeObject<InputMessage>(decodedMessage);
@@ -36,19 +37,22 @@ namespace LAB4.Hub
             var serializedMessage = JsonConvert.SerializeObject(messageToSend);
             var encodedMessage = cyper.EncryptMessage(chat.SecretKey, Encoding.Unicode.GetBytes(serializedMessage));
 
-            await Clients.Group(chatId.ToString()).SendMessageToChat(Encoding.Unicode.GetString(encodedMessage));
+            await Clients.Group(chatId.ToString()).SendMessageToChat(Convert.ToBase64String(encodedMessage));
         }
 
         public async Task EnterGroup(int chatId, string userName) 
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, chatId.ToString());
             await Clients.Group(chatId.ToString()).EnterGroup(userName);
+            Console.WriteLine($"{userName} entered chat with id {chatId}");
         }
 
         public async Task LeaveGroup(int chatId, string userName)
         {
             await Clients.Group(chatId.ToString()).LeaveGroup(userName);
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatId.ToString());
+
+            Console.WriteLine($"{userName} left chat with id {chatId}");
         }
     }
 }

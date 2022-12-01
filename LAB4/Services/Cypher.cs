@@ -13,6 +13,15 @@ namespace LAB4.Services
         {
             saltData = configuration.GetSection("AES")["Salt"];
         }
+        private Cypher(string saltData)
+        {
+            this.saltData = saltData;
+        }
+
+        public static Cypher CreateCypher(string saltData)
+        {
+            return new Cypher(saltData);
+        }
 
         public byte[] EncryptMessage(byte[] publicKey, byte[] message)
         {
