@@ -83,7 +83,7 @@ namespace LAB3
             HashGenerator hashGenerator = new HashGenerator();
             hashGenerator.Init();
             hashGenerator.GenerateCollision();
-
+            hashGenerator.GenerateCollisionFromFile("Resources/test3.txt");
         }
 
         private static IEnumerable<(BitArray[] bitArray, HashType hashType)> hashRun(string[] filesToHash)

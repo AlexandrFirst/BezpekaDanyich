@@ -20,7 +20,7 @@ namespace LAB3
         }
         public HashGenerator()
         {
-   
+
         }
 
         public void Init(bool generateNew = false)
@@ -37,7 +37,7 @@ namespace LAB3
             else
             {
                 T8 = new byte[] {
-                    98, 6, 85,150, 36, 23,112,164,135,207,169, 5, 26, 64,165,219, 
+                    98, 6, 85,150, 36, 23,112,164,135,207,169, 5, 26, 64,165,219,
                     61, 20, 68, 89,130, 63, 52,102, 24,229,132,245, 80,216,195,115,
                     90,168,156,203,177,120, 2,190,188, 7,100,185,174,243,162, 10,
                     237, 18,253,225, 8,208,172,244,255,126,101, 79,145,235,228,121,
@@ -66,7 +66,7 @@ namespace LAB3
             }
         }
         //https://gist.github.com/CodesInChaos/4a399a26b98221155a92
-        public void GenerateCollision() 
+        public void GenerateCollision()
         {
             var m0 = new byte[] { 0 };
             var targetHash = pearsonHash(new byte[] { 1 });
@@ -77,7 +77,7 @@ namespace LAB3
             var alphabet = alphabetLetters2.Take(maxAlphabet).ToArray();
 
             var h0 = pearsonHash(m0);
-            Console.WriteLine("Target Hash: " + BitConverter.ToString( targetHash));
+            Console.WriteLine("Target Hash: " + BitConverter.ToString(targetHash));
 
             Func<byte[], int, byte[], bool> check = (m, count, target) => pearsonHash(m0.Concat(m).ToArray()).Take(count).SequenceEqual(target.Take(count));
 
@@ -104,7 +104,7 @@ namespace LAB3
             var fullSuffix = projections.First();
             var combinedMessage = m0.Concat(fullSuffix).ToArray();
             Console.WriteLine(BitConverter.ToString(combinedMessage));
-            
+
             var attackHash = pearsonHash(combinedMessage);
             var initHash = pearsonHash(new byte[] { 1 });
 
@@ -142,6 +142,79 @@ namespace LAB3
             var result = pathes.Select(x => GenerateHash2bit(x)).ToArray();
             return result;
         }
+
+        public void GenerateCollisionFromFile(string path)
+        {
+            if (!File.Exists(path))
+            {
+                throw new Exception("Unable to read the file");
+            }
+
+            byte[] bytes = Encoding.UTF8.GetBytes(File.ReadAllText(path));
+            byte[] collisionBytes = bytes.ToArray();
+
+            var initialHash = pearsonHash(bytes)[0];
+
+            bool collisionFound = false;
+
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                ResetPreviousBytes(i, collisionBytes, bytes);
+                collisionFound = IterateCurrentByte(i, collisionBytes, initialHash);
+
+                if (collisionFound)
+                    break;
+            }
+
+            if (collisionFound)
+            {
+                var textFromBytes = Encoding.UTF8.GetString(collisionBytes);
+                if (!File.Exists("gen1.txt"))
+                {
+                    File.Create("gen1.txt");
+                }
+
+                File.WriteAllText("gen1.txt", textFromBytes);
+                Console.WriteLine("Collision file is written to gen1.txt");
+            }
+            else
+            {
+                Console.WriteLine("Collision to found");
+            }
+        }
+
+        private void ResetPreviousBytes(int tailLength, byte[] currentIteration, byte[] initialIteration)
+        {
+            for (int i = 0; i < tailLength; i++)
+            {
+                currentIteration[i] = initialIteration[i];
+            }
+        }
+
+        private bool IterateCurrentByte(int tailLength, byte[] currentIteration, byte initialHash)
+        {
+            byte byteIterateCount = (byte)(Byte.MaxValue - currentIteration[tailLength]);
+            for (byte j = 0; j < byteIterateCount; j++)
+            {
+                currentIteration[tailLength] += 1;
+
+                if (tailLength > 0)
+                {
+                    return IterateCurrentByte(tailLength - 1, currentIteration, initialHash);
+                }
+
+                var hashOnCurrentIteration = pearsonHash(currentIteration)[0];
+                if (hashOnCurrentIteration == initialHash)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+
+        }
+
+
 
         private (byte hash_b, string hash_s) GenerateHash8bit(string path)
         {
