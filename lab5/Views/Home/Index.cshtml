@@ -1,0 +1,35 @@
+﻿@model HomePaymentInfo
+
+<div>
+    <h1>Give us your monye(10 bucks)</h1>
+
+    <div id="liqpay_checkout"></div>
+</div>
+
+<script src="//static.liqpay.ua/libjs/checkout.js" async></script>
+<script>
+	window.LiqPayCheckoutCallback = function () {
+		const data = atob("@Model.Data")
+		const signature = atob("@Model.Signature");
+
+		console.log(data);
+		console.log(signature)
+
+		const p = LiqPayCheckout.init({
+			data: data,
+			signature: signature,
+			embedTo: "#liqpay_checkout",
+			language: "ru",
+			mode: "embed" // embed || popup
+		}).on("liqpay.callback", function (data) {
+			console.log(data.status);
+			console.log(data);
+		}).on("liqpay.ready", function (data) {
+			// ready
+		}).on("liqpay.close", function (data) {
+			// close
+		});
+
+		console.log(p)
+	};
+</script>
